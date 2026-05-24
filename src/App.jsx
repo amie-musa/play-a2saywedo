@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import Game from "./Game";
 
 import title from "./assets/title.png";
@@ -86,38 +85,26 @@ export default function App() {
   return (
     <div style={styles.page}>
       <div style={styles.container}>
+        <div style={styles.content}>
+          <img src={title} alt="Title" style={styles.title} />
+          <img src={heart} alt="Heart" style={styles.heart} />
 
-        {!started ? (
+          <img
+            src={instructions}
+            alt="Instructions"
+            style={styles.instructions}
+          />
 
-          <div style={styles.content}>
+          <div style={styles.buttonRow}>
+            <button style={styles.imageButton} onClick={handleRSVP}>
+              <img src={rsvpButton} alt="RSVP" style={styles.buttonImage} />
+            </button>
 
-            <img src={title} alt="Title" style={styles.title} />
-            <img src={heart} alt="Heart" style={styles.heart} />
-
-            <img
-              src={instructions}
-              alt="Instructions"
-              style={styles.instructions}
-            />
-
-            <div style={styles.buttonRow}>
-              <button style={styles.imageButton} onClick={handleRSVP}>
-                <img src={rsvpButton} alt="RSVP" style={styles.buttonImage} />
-              </button>
-
-              <button style={styles.imageButton} onClick={handlePlay}>
-                <img src={playButton} alt="PLAY" style={styles.buttonImage} />
-              </button>
-            </div>
-
+            <button style={styles.imageButton} onClick={handlePlay}>
+              <img src={playButton} alt="PLAY" style={styles.buttonImage} />
+            </button>
           </div>
-
-        ) : (
-
-          <Game />
-
-        )}
-
+        </div>
       </div>
     </div>
   );
