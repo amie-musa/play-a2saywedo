@@ -1,12 +1,12 @@
 import { useState } from "react";
 import Game from "./Game";
 
-import title from "./assets/title.png";
-import heart from "./assets/heart.gif";
-import instructions from "./assets/instructions.png";
-import skipText from "./assets/skip.png";
-import rsvpButton from "./assets/rsvp_button.png";
-import playButton from "./assets/play_button.png";
+const title = "/assets/title.png";
+const heart = "/assets/heart.gif";
+const instructions = "/assets/instructions.png";
+const skipText = "/assets/skip.png";
+const rsvpButton = "/assets/rsvp_button.png";
+const playButton = "/assets/play_button.png";
 
 export default function App() {
   const handleRSVP = () => {
