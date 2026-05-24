@@ -19,6 +19,10 @@ export default function App() {
     setStarted(true);
   };
 
+  if (started) {
+    return <Game />;
+  }
+
   const styles = {
     page: {
       minHeight: "100vh",
