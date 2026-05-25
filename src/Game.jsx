@@ -385,12 +385,15 @@ export default function Game() {
         }
 
       // JUMP
-      if (
-        (cursors.space.isDown ||
-          cursors.up.isDown ||
-          jumpPressed) &&
-        player.body.blocked.down
-      )
+    if (
+      (cursors.space.isDown ||
+        cursors.up.isDown ||
+        jumpPressed) &&
+      player.body.blocked.down
+    ) {
+        player.setVelocityY(-800);
+      }
+    }
 
     return () => {
       game.destroy(true);
