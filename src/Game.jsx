@@ -76,10 +76,10 @@ export default function Game() {
         "ring.png"
       );
 
-      this.load.image(
-        "gift",
-        "https://labs.phaser.io/assets/sprites/purple_ball.png"
-      );
+      // this.load.image(
+      //   "gift",
+      //   "https://labs.phaser.io/assets/sprites/purple_ball.png"
+      // );
 
       this.load.image("rock1", "/rock/rock-1.png");
       this.load.image("rock2", "/rock/rock-2.png");
@@ -94,6 +94,8 @@ export default function Game() {
     }
 
     function create() {
+
+    const isMobile = window.innerWidth < 768;
 
     // FATE ANIMATION
     this.anims.create({
@@ -147,7 +149,7 @@ export default function Game() {
 
     player.play("run");
 
-    player.setScale(0.35);
+    player.setScale(isMobile ? 0.22 : 0.35);
  
 
     player.setCollideWorldBounds(true);
@@ -318,23 +320,23 @@ export default function Game() {
         }
       }
 
-    // GIFT BOX
-    const gift = this.physics.add.sprite(
-      1800,
-      Phaser.Math.Between(250, 450),
-      "gift"
-    );
+    // // GIFT BOX
+    // const gift = this.physics.add.sprite(
+    //   1800,
+    //   Phaser.Math.Between(250, 450),
+    //   "gift"
+    // );
 
-      gift.setVelocityX(-gameSpeed);
+    //   gift.setVelocityX(-gameSpeed);
 
-      this.physics.add.overlap(player, gift, () => {
+    //   this.physics.add.overlap(player, gift, () => {
 
-        gift.destroy();
+    //     gift.destroy();
 
-        score += 200;
+    //     score += 200;
 
-        scoreText.setText("Score: " + score);
-      });
+    //     scoreText.setText("Score: " + score);
+    //   });
 
       // OBSTACLES
       const rocks = ["rock1", "rock2", "rock3", "rock4"];
@@ -353,7 +355,7 @@ export default function Game() {
             randomRock
           );
 
-          obstacle.setScale(0.15);
+          obstacle.setScale(isMobile ? 0.10 : 0.15);
           obstacle.setVelocityX(-gameSpeed);
           obstacle.setImmovable(true);
           obstacle.body.allowGravity = false;
