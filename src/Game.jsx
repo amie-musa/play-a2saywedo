@@ -154,6 +154,14 @@ export default function Game() {
 
       // CONTROLS
       cursors = this.input.keyboard.createCursorKeys();
+      
+      this.input.on("pointerdown", () => {
+        jumpPressed = true;
+      });
+
+      this.input.on("pointerup", () => {
+        jumpPressed = false;
+      });
 
       // SCORE TEXT
       scoreText = this.add.text(30, 30, "Score: 0", {
@@ -378,12 +386,11 @@ export default function Game() {
 
       // JUMP
       if (
-        (cursors.space.isDown || cursors.up.isDown) &&
-        player.body.touching.down
-      ) {
-        player.setVelocityY(-800);
-      }
-    }
+        (cursors.space.isDown ||
+          cursors.up.isDown ||
+          jumpPressed) &&
+        player.body.blocked.down
+      )
 
     return () => {
       game.destroy(true);
