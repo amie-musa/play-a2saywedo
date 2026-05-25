@@ -137,16 +137,21 @@ export default function Game() {
 
     this.physics.add.existing(ground, true);
 
-      // PLAYER
+      // PLAYER 
+      const playerX = isMobile
+        ? window.innerWidth * 0.22
+        : 260;
+
+      const playerY = isMobile
+        ? groundY - 140
+        : groundY - 200;
+
+      player = this.physics.add.sprite(
+        playerX,
+        playerY,
+        "fate1"
+      );
       
-    player = this.physics.add.sprite(
-    260,
-    groundY - 200,
-    "fate1"
-    );
-
-    player.setScale(0.30);
-
     player.play("run");
 
     player.setScale(isMobile ? 0.22 : 0.35);
@@ -241,7 +246,7 @@ export default function Game() {
           "treat"
         );
 
-        treat.setScale(0.1);
+        treat.setScale(isMobile ? 0.08 : 0.10);
 
         treat.setVelocityX(-gameSpeed);
         treat.body.allowGravity = false;
@@ -293,7 +298,7 @@ export default function Game() {
               "ring"
             );
 
-            ring.setScale(0.15);
+            ring.setScale(isMobile ? 0.12 : 0.15);
             ring.setVelocityX(-gameSpeed);
             ring.body.allowGravity = false;
           },
