@@ -248,7 +248,7 @@ export default function Game() {
           return;
         }
 
-        const randomY = isMobile ? Phaser.Math.Between(550, 950): Phaser.Math.Between(250, 650);
+        const randomY = isMobile ? Phaser.Math.Between(50, 350): Phaser.Math.Between(250, 650);
 
         const treat = treats.create(
           window.innerWidth + 100,
@@ -313,7 +313,7 @@ export default function Game() {
               return;
             }
 
-            const randomY = isMobile ? Phaser.Math.Between(550, 950): Phaser.Math.Between(250, 650);
+            const randomY = isMobile ? Phaser.Math.Between(50, 350): Phaser.Math.Between(250, 650);
 
             const ring = rings.create(
               window.innerWidth + 100,
