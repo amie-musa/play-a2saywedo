@@ -5,6 +5,9 @@ export default function Game() {
   const gameRef = useRef(null);
 
   useEffect(() => {
+
+    let debugText;
+
     let player;
     let grass;
     let cursors;
@@ -234,17 +237,29 @@ export default function Game() {
       delay: 3000,
       loop: true,
       callback: () => {
+
+        if (debugText) {
+          debugText.destroy();
+        }
+
         if (treatsCollected >= 3) {
           treatSpawnEvent.remove(false);
           startRingPhase.call(this);
           return;
         }
 
+        const randomY = isMobile ? Phaser.Math.Between(550, 950): Phaser.Math.Between(250, 650);
+
         const treat = treats.create(
           window.innerWidth + 100,
-          isMobile ? Phaser.Math.Between(550, 950): Phaser.Math.Between(250, 650),
+          randomY,
           "treat"
         );
+        
+        debugText = this.add.text(20, 400, "Treat Y: " + randomY, {
+          fontSize: "28px",
+          color: "#ff0000",
+        });
 
         treat.setScale(isMobile ? 0.08 : 0.10);
 
@@ -288,15 +303,29 @@ export default function Game() {
           delay: 3000,
           loop: true,
           callback: () => {
+
+            if (debugText) {
+                debugText.destroy();
+              }
+
+
             if (ringsCollected >= maxRings) {
               return;
             }
 
+            const randomY = isMobile ? Phaser.Math.Between(550, 950): Phaser.Math.Between(250, 650);
+
             const ring = rings.create(
               window.innerWidth + 100,
-              isMobile ? Phaser.Math.Between(550, 950): Phaser.Math.Between(250, 650),
+              randomY,
               "ring"
             );
+
+            debugText = this.add.text(20, 400, "Ring Y: " + randomY, {
+              fontSize: "28px",
+              color: "#ff0000",
+            });
+
 
             ring.setScale(isMobile ? 0.12 : 0.15);
             ring.setVelocityX(-gameSpeed);
