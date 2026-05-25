@@ -8,6 +8,7 @@ export default function Game() {
     let player;
     let grass;
     let cursors;
+    let jumpPressed = false;
 
     let score = 0;
     let scoreText;
@@ -392,6 +393,8 @@ export default function Game() {
       player.body.blocked.down
     ) {
         player.setVelocityY(-800);
+
+        jumpPressed = false;
       }
     }
 
