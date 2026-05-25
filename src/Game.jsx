@@ -294,7 +294,7 @@ export default function Game() {
 
             const ring = rings.create(
               window.innerWidth + 100,
-              Phaser.Math.Between(250, 650),
+              isMobile ? Phaser.Math.Between(450, 850): Phaser.Math.Between(250, 650),
               "ring"
             );
 
