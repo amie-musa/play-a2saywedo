@@ -6,8 +6,6 @@ export default function Game() {
 
   useEffect(() => {
 
-    let debugText;
-
     let player;
     let grass;
     let cursors;
@@ -238,10 +236,6 @@ export default function Game() {
       loop: true,
       callback: () => {
 
-        if (debugText) {
-          debugText.destroy();
-        }
-
         if (treatsCollected >= 3) {
           treatSpawnEvent.remove(false);
           startRingPhase.call(this);
@@ -255,11 +249,6 @@ export default function Game() {
           randomY,
           "treat"
         );
-        
-        debugText = this.add.text(20, 400, "Treat Y: " + randomY, {
-          fontSize: "28px",
-          color: "#ff0000",
-        });
 
         treat.setScale(isMobile ? 0.08 : 0.10);
 
@@ -304,11 +293,6 @@ export default function Game() {
           loop: true,
           callback: () => {
 
-            if (debugText) {
-                debugText.destroy();
-              }
-
-
             if (ringsCollected >= maxRings) {
               return;
             }
@@ -320,12 +304,6 @@ export default function Game() {
               randomY,
               "ring"
             );
-
-            debugText = this.add.text(20, 400, "Ring Y: " + randomY, {
-              fontSize: "28px",
-              color: "#ff0000",
-            });
-
 
             ring.setScale(isMobile ? 0.12 : 0.15);
             ring.setVelocityX(-gameSpeed);
