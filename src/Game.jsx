@@ -154,7 +154,7 @@ export default function Game() {
       
     player.play("run");
 
-    player.setScale(isMobile ? 0.22 : 0.35);
+    player.setScale(isMobile ? 0.15 : 0.35);
  
 
     player.setCollideWorldBounds(true);
