@@ -140,7 +140,7 @@ export default function Game() {
       // PLAYER 
       const playerX = isMobile
         ? window.innerWidth * 0.22
-        : 260;
+        : 200;
 
       const playerY = isMobile
         ? groundY - 140
