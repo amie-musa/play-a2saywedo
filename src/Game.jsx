@@ -202,7 +202,7 @@ export default function Game() {
       
       const iconY = isMobile ? 110 : 90;
       const iconStartX = isMobile ? 100 : 500;
-      const iconSpacing = isMobile ? 40 : 80;
+      const iconSpacing = isMobile ? 50 : 70;
 
       for (let i = 0; i < maxTreats; i++) {
         const icon = this.add.image(iconStartX + i * iconSpacing, iconY, "treat");
@@ -328,8 +328,8 @@ export default function Game() {
 
         if (ringsCollected === maxRings) {
           this.add.text(
-            window.innerWidth / 2 - 250,
-            window.innerHeight / 2,
+            isMobile ? window.innerWidth/ 2 : window.innerWidth / 2 - 250,
+            isMobile ? window.innerHeight / 2 - 25 : window.innerHeight / 2 - 25,
             "The rings made it safely 💍",
             { fontSize: isMobile ? "10px" : "48px", color: "#000" }
           );
