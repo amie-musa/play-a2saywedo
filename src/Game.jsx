@@ -28,6 +28,7 @@ export default function Game() {
     let gameEnded = false;
 
     let gameSpeed = 250;
+    const isMobile = window.innerWidth < 768;
 
     const config = {
       type: Phaser.AUTO,
@@ -105,8 +106,6 @@ export default function Game() {
 
     function create() {
 
-    const isMobile = window.innerWidth < 768;
-
     // FATE ANIMATION
     this.anims.create({
         key: "run",
@@ -165,7 +164,7 @@ export default function Game() {
       
     player.play("run");
 
-    const playerScale = isMobile ? 0.08 : 0.12;
+    const playerScale = isMobile ? 0.07 : 0.12;
     player.setScale(playerScale);
  
 
@@ -209,8 +208,6 @@ export default function Game() {
         color: "#000",
       });
 
-      scoreText.setScrollFactor(0);
-
       // AUTO SCORE
       const scoreEvent = this.time.addEvent({
         delay: 100,
@@ -225,12 +222,11 @@ export default function Game() {
 
       //COLLECT TRACKER
       const iconY = isMobile ? 110 : 90;
-      const iconStartX = isMobile ? 100 : 230;
-      const iconSpacing = isMobile ? 50 : 60;
+      const iconStartX = isMobile ? 150 : 230;
+      const iconSpacing = isMobile ? 40 : 60;
       
-      // Add "Collect Treats" icon
-      const collectTreatsIcon = this.add.image(iconStartX - 120, iconY, "collect");
-      collectTreatsIcon.setScale(isMobile ? 0.07 : 0.12);
+      const collectIcon = this.add.image(isMobile ? iconStartX - 80 : iconStartX - 120, iconY, "collect");
+      collectIcon.setScale(isMobile ? 0.07 : 0.12);
 
       for (let i = 0; i < maxTreats; i++) {
         const icon = this.add.image(iconStartX + i * iconSpacing, iconY, "treat");
@@ -434,21 +430,21 @@ export default function Game() {
 
         // Create us.png - fade in at fixed position
         const usImage = this.physics.add.sprite(
-          window.innerWidth * .70,
-          isMobile? groundY - 50: groundY - 130,
+          isMobile ? window.innerWidth * .52 :  window.innerWidth * .70,
+          isMobile ? groundY - 85: groundY - 130,
           "us"
         );
-        usImage.setScale(isMobile ? 0.12 : 0.20);
+        usImage.setScale(isMobile ? 0.13 : 0.20);
         usImage.setAlpha(0);
         usImage.body.allowGravity = false;
 
         // Create milo.png - fade in at fixed position
         const miloImage = this.physics.add.sprite(
-          window.innerWidth * .87,
-          isMobile? groundY - 50: groundY - 90,
+          isMobile ? window.innerWidth * .80 : window.innerWidth * .87,
+          isMobile ? groundY - 60: groundY - 90,
           "milo"
         );
-        miloImage.setScale(isMobile ? 0.12 : 0.22);
+        miloImage.setScale(isMobile ? 0.13 : 0.22);
         miloImage.setAlpha(0);
         miloImage.body.allowGravity = false;
 
@@ -499,7 +495,7 @@ export default function Game() {
             player.body.setAllowGravity(false);
           }
 
-          const rightEdge = window.innerWidth * 0.52;
+          const rightEdge = isMobile ? window.innerWidth * 0.12 : window.innerWidth * 0.52;
           if (player.x >= rightEdge) {
             gameEnded = true;
             console.log("🎮 Game Ended!", {
