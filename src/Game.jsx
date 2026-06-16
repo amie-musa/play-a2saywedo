@@ -156,7 +156,7 @@ export default function Game() {
       
     player.play("run");
 
-    const playerScale = isMobile ? 0.06 : 0.12;
+    const playerScale = isMobile ? 0.08 : 0.12;
     player.setScale(playerScale);
  
 
@@ -201,7 +201,7 @@ export default function Game() {
       });
       
       const iconY = 90;
-      const iconStartX = 500;
+      const iconStartX = isMobile ? 100 : 500;
       const iconSpacing = 80;
 
       for (let i = 0; i < maxTreats; i++) {
