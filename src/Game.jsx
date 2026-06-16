@@ -200,7 +200,7 @@ export default function Game() {
         },
       });
       
-      const iconY = isMobile ? 40 : 90;
+      const iconY = isMobile ? 100 : 90;
       const iconStartX = isMobile ? 100 : 500;
       const iconSpacing = isMobile ? 60 : 80;
 
