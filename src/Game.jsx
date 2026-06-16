@@ -200,9 +200,9 @@ export default function Game() {
         },
       });
       
-      const iconY = isMobile ? 100 : 90;
+      const iconY = isMobile ? 110 : 90;
       const iconStartX = isMobile ? 100 : 500;
-      const iconSpacing = isMobile ? 60 : 80;
+      const iconSpacing = isMobile ? 40 : 80;
 
       for (let i = 0; i < maxTreats; i++) {
         const icon = this.add.image(iconStartX + i * iconSpacing, iconY, "treat");
