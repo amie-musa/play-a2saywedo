@@ -82,12 +82,12 @@ export default function Game() {
       this.load.image("rock3", "/rock/rock-3.png");
       this.load.image("rock4", "/rock/rock-4.png");
       
-      this.load.image("fate1", "/fate/fate-1.PNG");
-      this.load.image("fate2", "/fate/fate-2.PNG");
-      this.load.image("fate3", "/fate/fate-3.PNG");
-      this.load.image("fate4", "/fate/fate-4.PNG");
-      this.load.image("fate5", "/fate/fate-5.PNG");
-      this.load.image("fate6", "/fate/fate-6.PNG");
+      this.load.image("fate1", "/fate/fate-1.png");
+      this.load.image("fate2", "/fate/fate-2.png");
+      this.load.image("fate3", "/fate/fate-3.png");
+      this.load.image("fate4", "/fate/fate-4.png");
+      this.load.image("fate5", "/fate/fate-5.png");
+      this.load.image("fate6", "/fate/fate-6.png");
     }
 
     function create() {
