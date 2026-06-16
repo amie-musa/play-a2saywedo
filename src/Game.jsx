@@ -152,7 +152,7 @@ export default function Game() {
       
     player.play("run");
 
-    const playerScale = isMobile ? 0.10 : 0.15;
+    const playerScale = isMobile ? 0.08 : 0.12;
     player.setScale(playerScale);
  
 
