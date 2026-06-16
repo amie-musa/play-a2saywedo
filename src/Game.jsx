@@ -161,6 +161,8 @@ export default function Game() {
         playerY,
         "fate1"
       );
+
+    player.setDepth(1); 
       
     player.play("run");
 
