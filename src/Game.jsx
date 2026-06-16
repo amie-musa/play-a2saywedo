@@ -77,21 +77,17 @@ export default function Game() {
         "ring.png"
       );
 
-      // this.load.image(
-      //   "gift",
-      //   "https://labs.phaser.io/assets/sprites/purple_ball.png"
-      // );
-
       this.load.image("rock1", "/rock/rock-1.png");
       this.load.image("rock2", "/rock/rock-2.png");
       this.load.image("rock3", "/rock/rock-3.png");
       this.load.image("rock4", "/rock/rock-4.png");
       
-      this.load.image("fate1", "/fate/fate-1.png");
-      this.load.image("fate2", "/fate/fate-2.png");
-      this.load.image("fate3", "/fate/fate-3.png");
-      this.load.image("fate4", "/fate/fate-4.png");
-      this.load.image("fate5", "/fate/fate-5.png");
+      this.load.image("fate1", "/fate/fate-1.PNG");
+      this.load.image("fate2", "/fate/fate-2.PNG");
+      this.load.image("fate3", "/fate/fate-3.PNG");
+      this.load.image("fate4", "/fate/fate-4.PNG");
+      this.load.image("fate5", "/fate/fate-5.PNG");
+      this.load.image("fate6", "/fate/fate-6.PNG");
     }
 
     function create() {
@@ -107,6 +103,7 @@ export default function Game() {
             { key: "fate3" },
             { key: "fate4" },
             { key: "fate5" },
+            { key: "fate6" },
         ],
         frameRate: 6,
         repeat: -1,
@@ -155,7 +152,8 @@ export default function Game() {
       
     player.play("run");
 
-    player.setScale(isMobile ? 0.15 : 0.35);
+    const playerScale = isMobile ? 0.10 : 0.15;
+    player.setScale(playerScale);
  
 
     player.setCollideWorldBounds(true);
@@ -331,24 +329,6 @@ export default function Game() {
           );
         }
       }
-
-    // // GIFT BOX
-    // const gift = this.physics.add.sprite(
-    //   1800,
-    //   Phaser.Math.Between(250, 450),
-    //   "gift"
-    // );
-
-    //   gift.setVelocityX(-gameSpeed);
-
-    //   this.physics.add.overlap(player, gift, () => {
-
-    //     gift.destroy();
-
-    //     score += 200;
-
-    //     scoreText.setText("Score: " + score);
-    //   });
 
       // OBSTACLES
       const rocks = ["rock1", "rock2", "rock3", "rock4"];
