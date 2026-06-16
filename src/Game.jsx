@@ -71,6 +71,11 @@ export default function Game() {
       );
 
       this.load.image(
+        "collect",
+        "collect.png"
+      );
+
+      this.load.image(
         "treat",
         "treat.png"
       );
@@ -79,6 +84,7 @@ export default function Game() {
         "ring",
         "ring.png"
       );
+      
 
       this.load.image("rock1", "/rock/rock-1.png");
       this.load.image("rock2", "/rock/rock-2.png");
@@ -92,6 +98,9 @@ export default function Game() {
       this.load.image("fate5", "/fate/fate-5.png");
       this.load.image("fate6", "/fate/fate-6.png");
       this.load.image("final_fate", "/final_fate.png");
+      
+      this.load.image("us", "/us.png");
+      this.load.image("milo", "/milo.png");
     }
 
     function create() {
@@ -180,6 +189,20 @@ export default function Game() {
         jumpPressed = false;
       });
 
+      // DEBUG: Press 'E' to trigger end sequence
+      this.input.keyboard.on("keydown-E", () => {
+        if (!endSequenceStarted && !gameEnded) {
+          endSequenceReady = true;
+          ringsCollected = maxRings;
+          this.add.text(
+            isMobile ? window.innerWidth / 2 : window.innerWidth / 2 - 350,
+            isMobile ? window.innerHeight / 2 - 25 : window.innerHeight / 2 - 10,
+            "The rings made it safely 💍",
+            { fontSize: isMobile ? "10px" : "36px", color: "#000" }
+          );
+        }
+      });
+
       // SCORE TEXT
       scoreText = this.add.text(30, 30, "Score: 0", {
         fontSize: "32px",
@@ -199,21 +222,26 @@ export default function Game() {
           }
         },
       });
-      
+
+      //COLLECT TRACKER
       const iconY = isMobile ? 110 : 90;
-      const iconStartX = isMobile ? 100 : 500;
-      const iconSpacing = isMobile ? 50 : 70;
+      const iconStartX = isMobile ? 100 : 230;
+      const iconSpacing = isMobile ? 50 : 60;
+      
+      // Add "Collect Treats" icon
+      const collectTreatsIcon = this.add.image(iconStartX - 120, iconY, "collect");
+      collectTreatsIcon.setScale(isMobile ? 0.07 : 0.12);
 
       for (let i = 0; i < maxTreats; i++) {
         const icon = this.add.image(iconStartX + i * iconSpacing, iconY, "treat");
-        isMobile ? icon.setScale(0.04) : icon.setScale(0.07);
+        isMobile ? icon.setScale(0.04) : icon.setScale(0.06);
         icon.setAlpha(0.25);
         treatIcons.push(icon);
       }
-      
+
       for (let i = 0; i < maxRings; i++) {
         const icon = this.add.image(iconStartX + (maxTreats + i) * iconSpacing, iconY, "ring");
-        isMobile ? icon.setScale(0.075) : icon.setScale(0.11);
+        isMobile ? icon.setScale(0.075) : icon.setScale(0.10);
         icon.setAlpha(0.25);
         ringIcons.push(icon);
       }
@@ -328,10 +356,10 @@ export default function Game() {
 
         if (ringsCollected === maxRings) {
           this.add.text(
-            isMobile ? window.innerWidth/ 2 : window.innerWidth / 2 - 250,
+            isMobile ? window.innerWidth/ 2 : window.innerWidth / 2 - 300,
             isMobile ? window.innerHeight / 2 - 25 : window.innerHeight / 2 - 25,
             "The rings made it safely 💍",
-            { fontSize: isMobile ? "10px" : "48px", color: "#000" }
+            { fontSize: isMobile ? "10px" : "36px", color: "#000" }
           );
           endSequenceReady = true;
         }
@@ -402,6 +430,36 @@ export default function Game() {
           ringSpawnEvent.remove(false);
         }
 
+        const groundY = window.innerHeight - 80;
+
+        // Create us.png - fade in at fixed position
+        const usImage = this.physics.add.sprite(
+          window.innerWidth * .70,
+          isMobile? groundY - 50: groundY - 130,
+          "us"
+        );
+        usImage.setScale(isMobile ? 0.12 : 0.20);
+        usImage.setAlpha(0);
+        usImage.body.allowGravity = false;
+
+        // Create milo.png - fade in at fixed position
+        const miloImage = this.physics.add.sprite(
+          window.innerWidth * .87,
+          isMobile? groundY - 50: groundY - 90,
+          "milo"
+        );
+        miloImage.setScale(isMobile ? 0.12 : 0.22);
+        miloImage.setAlpha(0);
+        miloImage.body.allowGravity = false;
+
+        // Fade in both images
+        this.tweens.add({
+          targets: [usImage, miloImage],
+          alpha: 1,
+          duration: 1000,
+          ease: "Power2.easeInOut",
+        });
+
         // Player runs to the right
         player.setCollideWorldBounds(false);
         player.setVelocityX(320); // Run RIGHT
@@ -415,7 +473,7 @@ export default function Game() {
           obstacleCollider.active = false;
           
           if (player.body.blocked.down) {
-            startEndSequence();
+            startEndSequence.call(this);
           }
         }
       });
@@ -441,7 +499,7 @@ export default function Game() {
             player.body.setAllowGravity(false);
           }
 
-          const rightEdge = window.innerWidth * 0.60;
+          const rightEdge = window.innerWidth * 0.52;
           if (player.x >= rightEdge) {
             gameEnded = true;
             console.log("🎮 Game Ended!", {
