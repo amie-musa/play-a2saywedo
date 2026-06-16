@@ -23,6 +23,9 @@ export default function Game() {
 
     let treatsCollected = 0;
     let ringsCollected = 0;
+    let endSequenceStarted = false;
+    let endSequenceReady = false;
+    let gameEnded = false;
 
     let gameSpeed = 250;
 
@@ -88,6 +91,7 @@ export default function Game() {
       this.load.image("fate4", "/fate/fate-4.png");
       this.load.image("fate5", "/fate/fate-5.png");
       this.load.image("fate6", "/fate/fate-6.png");
+      this.load.image("final_fate", "/final_fate.png");
     }
 
     function create() {
@@ -152,7 +156,7 @@ export default function Game() {
       
     player.play("run");
 
-    const playerScale = isMobile ? 0.08 : 0.12;
+    const playerScale = isMobile ? 0.06 : 0.12;
     player.setScale(playerScale);
  
 
@@ -185,29 +189,31 @@ export default function Game() {
       scoreText.setScrollFactor(0);
 
       // AUTO SCORE
-      this.time.addEvent({
+      const scoreEvent = this.time.addEvent({
         delay: 100,
         loop: true,
         callback: () => {
-          score += 1;
-          scoreText.setText("Score: " + score);
+          if (!gameEnded) {
+            score += 1;
+            scoreText.setText("Score: " + score);
+          }
         },
       });
       
       const iconY = 90;
-      const iconStartX = 120;
+      const iconStartX = 500;
       const iconSpacing = 80;
 
       for (let i = 0; i < maxTreats; i++) {
         const icon = this.add.image(iconStartX + i * iconSpacing, iconY, "treat");
-        icon.setScale(0.08);
+        isMobile ? icon.setScale(0.04) : icon.setScale(0.07);
         icon.setAlpha(0.25);
         treatIcons.push(icon);
       }
       
       for (let i = 0; i < maxRings; i++) {
         const icon = this.add.image(iconStartX + (maxTreats + i) * iconSpacing, iconY, "ring");
-        icon.setScale(0.12);
+        isMobile ? icon.setScale(0.075) : icon.setScale(0.11);
         icon.setAlpha(0.25);
         ringIcons.push(icon);
       }
@@ -327,6 +333,7 @@ export default function Game() {
             "The rings made it safely 💍",
             { fontSize: "48px", color: "#000" }
           );
+          endSequenceReady = true;
         }
       }
 
@@ -339,6 +346,8 @@ export default function Game() {
         delay: 4000,
         loop: true,
         callback: () => {
+          if (endSequenceStarted) return;
+
           const randomRock = Phaser.Utils.Array.GetRandom(rocks);
 
           const obstacle = obstacles.create(
@@ -355,7 +364,7 @@ export default function Game() {
       });
 
       // HIT OBSTACLE
-      this.physics.add.collider(
+      const obstacleCollider = this.physics.add.collider(
         player,
         obstacles,
         hitObstacle,
@@ -364,8 +373,9 @@ export default function Game() {
       );
 
       function hitObstacle(player, obstacle) {
-
         obstacle.destroy();
+
+        if (endSequenceStarted || endSequenceReady) return;
 
         score -= 50;
 
@@ -373,20 +383,82 @@ export default function Game() {
 
         player.setVelocityX(0);
       }
+
+      function startEndSequence() {
+        if (endSequenceStarted) return;
+        endSequenceStarted = true;
+
+        // Disable obstacle collisions
+        obstacleCollider.active = false;
+
+        // Destroy all obstacles
+        obstacles.clear(true);
+
+        // Destroy all rings from screen
+        rings.clear(true);
+
+        // Stop spawning new rings and obstacles
+        if (ringSpawnEvent) {
+          ringSpawnEvent.remove(false);
+        }
+
+        // Player runs to the right
+        player.setCollideWorldBounds(false);
+        player.setVelocityX(320); // Run RIGHT
+        player.play("run");
+        // Don't disable gravity yet - let the player land naturally
+      }
+
+      this.events.on("update", () => {
+        if (endSequenceReady && !endSequenceStarted) {
+          // Disable collisions once ready
+          obstacleCollider.active = false;
+          
+          if (player.body.blocked.down) {
+            startEndSequence();
+          }
+        }
+      });
     }
 
     function update() {
 
-        grass.tilePositionX += gameSpeed * 0.064;
+        if (!endSequenceStarted) {
+          grass.tilePositionX += gameSpeed * 0.064;
+        }
 
-        if (player.body.blocked.down) {
-        player.anims.play("run", true);
-        } else {
-        player.setTexture("fate1"); // or jump frame
+        if (!endSequenceStarted && !gameEnded) {
+          if (player.body.blocked.down) {
+            player.anims.play("run", true);
+          } else {
+            player.setTexture("fate1"); // or jump frame
+          }
+        }
+
+        if (endSequenceStarted && !gameEnded) {
+          // Disable gravity once player lands on ground
+          if (player.body.blocked.down) {
+            player.body.setAllowGravity(false);
+          }
+
+          const rightEdge = window.innerWidth * 0.60;
+          if (player.x >= rightEdge) {
+            gameEnded = true;
+            console.log("🎮 Game Ended!", {
+              finalScore: score,
+              treatsCollected,
+              ringsCollected,
+              timestamp: new Date().toISOString(),
+            });
+            player.setVelocityX(0);
+            player.anims.stop();
+            player.setTexture("final_fate");
+            player.body.setAllowGravity(false);
+          }
         }
 
       // JUMP
-    if (
+    if (!endSequenceStarted && !gameEnded &&
       (cursors.space.isDown ||
         cursors.up.isDown ||
         jumpPressed) &&
