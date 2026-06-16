@@ -123,7 +123,7 @@ export default function Game() {
     );
     grass.setOrigin(0, 0);
 
-    grass.setScale(0.25);
+    isMobile ? grass.setScale(0.15) : grass.setScale(0.25);
 
     const groundY = window.innerHeight - 80;
 
