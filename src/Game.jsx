@@ -331,7 +331,7 @@ export default function Game() {
             window.innerWidth / 2 - 250,
             window.innerHeight / 2,
             "The rings made it safely 💍",
-            { fontSize: "48px", color: "#000" }
+            { fontSize: isMobile ? "10px" : "48px", color: "#000" }
           );
           endSequenceReady = true;
         }
