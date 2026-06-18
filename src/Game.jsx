@@ -8,6 +8,7 @@ export default function Game() {
 
     let player;
     let grass;
+    let clouds;
     let cursors;
     let jumpPressed = false;
 
@@ -72,6 +73,11 @@ export default function Game() {
       );
 
       this.load.image(
+        "clouds",
+        "clouds.png"
+      );
+
+      this.load.image(
         "collect",
         "collect.png"
       );
@@ -121,10 +127,26 @@ export default function Game() {
         repeat: -1,
     });
 
+    // SLOW BACKGROUND CLOUDS
+    clouds = this.add.tileSprite(
+      0,
+      0,
+      window.innerWidth,
+      window.innerHeight,
+      "clouds"
+    );
+    clouds.setOrigin(0, 0);
+    clouds.setDepth(-1);
+    const cloudTexture = this.textures.get("clouds").getSourceImage();
+    const cloudScale = isMobile
+      ? Math.max(window.innerHeight / cloudTexture.height, 0.45)
+      : 0.6;
+    clouds.setTileScale(cloudScale);
+
     // VISUAL GRASS
     grass = this.add.tileSprite(
       0,
-      window.innerHeight - 160,
+      window.innerHeight - 140,
       window.innerWidth * 4,
     0,
       "grass"
@@ -204,26 +226,26 @@ export default function Game() {
         }
       });
 
-      // SCORE TEXT
-      scoreText = this.add.text(30, 30, "Score: 0", {
-        fontSize: "32px",
-        color: "#000",
-      });
+      // // SCORE TEXT
+      // scoreText = this.add.text(30, 30, "Score: 0", {
+      //   fontSize: "32px",
+      //   color: "#000",
+      // });
 
-      // AUTO SCORE
-      const scoreEvent = this.time.addEvent({
-        delay: 100,
-        loop: true,
-        callback: () => {
-          if (!gameEnded) {
-            score += 1;
-            scoreText.setText("Score: " + score);
-          }
-        },
-      });
+      // // AUTO SCORE
+      // const scoreEvent = this.time.addEvent({
+      //   delay: 100,
+      //   loop: true,
+      //   callback: () => {
+      //     if (!gameEnded) {
+      //       score += 1;
+      //       scoreText.setText("Score: " + score);
+      //     }
+      //   },
+      // });
 
       //COLLECT TRACKER
-      const iconY = isMobile ? 110 : 90;
+      const iconY = isMobile ? 100 : 90;
       const iconStartX = isMobile ? 150 : 230;
       const iconSpacing = isMobile ? 40 : 60;
       
@@ -302,9 +324,9 @@ export default function Game() {
 
         treatsCollected++;
 
-        score += 100;
+        // score += 100;
 
-        scoreText.setText("Score: " + score);
+        // scoreText.setText("Score: " + score);
 
         // SPAWN RINGS AFTER 3 TREATS
         if (treatsCollected === 3) {
@@ -347,8 +369,8 @@ export default function Game() {
       function collectRing(player, ring) {
         ring.destroy();
         ringsCollected++;
-        score += 100;
-        scoreText.setText("Score: " + score);
+        // score += 100;
+        // scoreText.setText("Score: " + score);
 
         updateHUD();
 
@@ -403,9 +425,9 @@ export default function Game() {
 
         if (endSequenceStarted || endSequenceReady) return;
 
-        score -= 50;
+        // score -= 50;
 
-        scoreText.setText("Score: " + score);
+        // scoreText.setText("Score: " + score);
 
         player.setVelocityX(0);
       }
@@ -480,6 +502,7 @@ export default function Game() {
     function update() {
 
         if (!endSequenceStarted) {
+          clouds.tilePositionX += gameSpeed * 0.008;
           grass.tilePositionX += gameSpeed * 0.064;
         }
 
@@ -501,7 +524,6 @@ export default function Game() {
           if (player.x >= rightEdge) {
             gameEnded = true;
             console.log("🎮 Game Ended!", {
-              finalScore: score,
               treatsCollected,
               ringsCollected,
               timestamp: new Date().toISOString(),
