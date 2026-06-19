@@ -125,7 +125,7 @@ export default function Game() {
 
       let redirectCountdown = 8;
       const messageX = isMobile ? window.innerWidth / 2 : window.innerWidth - 430;
-      const messageY = isMobile ? window.innerHeight / 2 - 20 : window.innerHeight / 2 - 110;
+      const messageY = isMobile ? window.innerHeight * 0.55 : window.innerHeight / 2 - 110;
 
       const updateWinMessage = () => {
         winMessageText.setText(
@@ -134,7 +134,7 @@ export default function Game() {
       };
 
       winMessageText = scene.add.text(messageX, messageY, "", {
-        fontFamily: "Arial, sans-serif",
+        fontFamily: '"Comic Sans MS", "Comic Sans", cursive',
         fontSize: isMobile ? "14px" : "18px",
         color: "#000",
         align: isMobile ? "center" : "left",
@@ -312,12 +312,12 @@ export default function Game() {
       });
 
       // SCORE TEXT
-      scoreText = this.add.text(30, 30, "Score: 0", {
-        fontFamily: "Arial, sans-serif",
-        fontSize: isMobile ? "16px" : "28px",
+      scoreText = this.add.text(30, isMobile ? 54 : 30, "score: 0", {
+        fontFamily: '"Comic Sans MS", "Comic Sans", cursive',
+        fontSize: isMobile ? "16px" : "24px",
         color: "#000",
       });
-      scoreText.setDepth(10);
+      scoreText.setDepth(15);
 
       // AUTO SCORE
       this.time.addEvent({
@@ -332,7 +332,7 @@ export default function Game() {
       });
 
       //COLLECT TRACKER
-      const iconY = isMobile ? 100 : 90;
+      const iconY = isMobile ? 110 : 90;
       const iconStartX = isMobile ? 150 : 230;
       const iconSpacing = isMobile ? 40 : 60;
       
@@ -670,7 +670,7 @@ export default function Game() {
             display: "flex",
             alignItems: "flex-start",
             justifyContent: "flex-start",
-            padding: window.innerWidth < 768 ? "128px 16px 16px 28px" : "150px 0 20px 56px",
+            padding: window.innerWidth < 768 ? "128px 16px 16px 30px" : "150px 0 20px 30px",
             pointerEvents: "none",
           }}
         >
@@ -678,7 +678,7 @@ export default function Game() {
             style={{
               width: window.innerWidth < 768 ? "min(360px, 100%)" : 360,
               color: "#1f1f1f",
-              fontFamily: "Arial, sans-serif",
+              fontFamily: '"Comic Sans MS", "Comic Sans", cursive',
               pointerEvents: "auto",
               textAlign: "left",
             }}
@@ -696,7 +696,7 @@ export default function Game() {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    Enter your name:
+                    enter your name:
                   </label>
                   <input
                     id="leaderboard-name"
@@ -731,11 +731,11 @@ export default function Game() {
               </form>
             ) : (
               <p style={{ margin: "0 0 12px", fontWeight: 700 }}>
-                Score added.
+                score added.
               </p>
             )}
 
-            <h2 style={{ margin: "20px 0 0", fontSize: 28 }}>Leaderboard</h2>
+            <h3 style={{ margin: "20px 0 0", fontSize: 28 }}>leaderboard</h3>
             <ol
               style={{
                 margin: "8px 0 0",
@@ -744,7 +744,7 @@ export default function Game() {
               }}
             >
               {leaderboard.length === 0 ? (
-                <li style={{ padding: "6px 0" }}>No scores yet</li>
+                <li style={{ padding: "6px 0" }}>no scores yet</li>
               ) : (
                 leaderboard.slice(0, 5).map((entry, index) => (
                   <li
@@ -752,7 +752,7 @@ export default function Game() {
                     style={{ padding: "6px 0", fontSize: 16 }}
                   >
                     <span>{entry.name}</span>
-                    <strong style={{ float: "right" }}>{entry.score}</strong>
+                    <span style={{ float: "right" }}>{entry.score}</span>
                   </li>
                 ))
               )}
