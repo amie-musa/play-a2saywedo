@@ -134,7 +134,7 @@ export default function Game() {
       };
 
       winMessageText = scene.add.text(messageX, messageY, "", {
-        fontFamily: '"Comic Sans MS", "Comic Sans", cursive',
+        fontFamily: '"Comic Sans MS", "Comic Sans", sans-serif',
         fontSize: isMobile ? "14px" : "18px",
         color: "#000",
         align: isMobile ? "center" : "left",
@@ -313,7 +313,7 @@ export default function Game() {
 
       // SCORE TEXT
       scoreText = this.add.text(30, isMobile ? 54 : 30, "score: 0", {
-        fontFamily: '"Comic Sans MS", "Comic Sans", cursive',
+        fontFamily: '"Comic Sans MS", "Comic Sans", sans-serif',
         fontSize: isMobile ? "16px" : "24px",
         color: "#000",
       });
@@ -678,7 +678,7 @@ export default function Game() {
             style={{
               width: window.innerWidth < 768 ? "min(360px, 100%)" : 360,
               color: "#1f1f1f",
-              fontFamily: '"Comic Sans MS", "Comic Sans", cursive',
+              fontFamily: '"Comic Sans MS", "Comic Sans", sans-serif',
               pointerEvents: "auto",
               textAlign: "left",
             }}
