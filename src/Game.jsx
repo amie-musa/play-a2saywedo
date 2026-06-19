@@ -619,7 +619,7 @@ export default function Game() {
             display: "flex",
             alignItems: "flex-start",
             justifyContent: window.innerWidth < 768 ? "center" : "flex-start",
-            padding: window.innerWidth < 768 ? "96px 24px 16px" : "120px 0 20px 56px",
+            padding: window.innerWidth < 768 ? "128px 24px 16px" : "120px 0 20px 56px",
             pointerEvents: "none",
           }}
         >
@@ -632,21 +632,21 @@ export default function Game() {
               textAlign: window.innerWidth < 768 ? "center" : "left",
             }}
           >
-            <h2 style={{ margin: "0 0 8px", fontSize: 28 }}>Leaderboard</h2>
             {!scoreSubmitted ? (
               <form onSubmit={handleLeaderboardSubmit}>
-                <label
-                  htmlFor="leaderboard-name"
-                  style={{
-                    display: "block",
-                    marginBottom: 8,
-                    fontSize: 14,
-                    fontWeight: 700,
-                  }}
-                >
-                  Username
-                </label>
                 <div style={{ display: "flex", gap: 10 }}>
+                  <label
+                    htmlFor="leaderboard-name"
+                    style={{
+                      alignSelf: "center",
+                      flexShrink: 0,
+                      fontSize: 14,
+                      fontWeight: 700,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    Enter your name:
+                  </label>
                   <input
                     id="leaderboard-name"
                     value={username}
@@ -684,9 +684,10 @@ export default function Game() {
               </p>
             )}
 
+            <h2 style={{ margin: "20px 0 0", fontSize: 28 }}>Leaderboard</h2>
             <ol
               style={{
-                margin: "20px 0 0",
+                margin: "8px 0 0",
                 paddingLeft: window.innerWidth < 768 ? 0 : 24,
                 listStylePosition: window.innerWidth < 768 ? "inside" : "outside",
               }}
