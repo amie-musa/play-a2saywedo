@@ -129,7 +129,7 @@ export default function Game() {
 
       const updateWinMessage = () => {
         winMessageText.setText(
-          `You win! The rings made it safely.\n\nRedirecting in ${redirectCountdown}...`
+          `You win! The rings made it safely 💍.\n\nRedirecting in ${redirectCountdown}...`
         );
       };
 
