@@ -1,8 +1,38 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Phaser from "phaser";
+
+const leaderboardKey = "a2saywedo-leaderboard";
+
+function getStoredLeaderboard() {
+  try {
+    return JSON.parse(localStorage.getItem(leaderboardKey)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function saveLeaderboardEntry(name, score) {
+  const entry = {
+    name: name.trim() || "Player",
+    score,
+    date: new Date().toISOString(),
+  };
+
+  const leaderboard = [...getStoredLeaderboard(), entry]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5);
+
+  localStorage.setItem(leaderboardKey, JSON.stringify(leaderboard));
+  return leaderboard;
+}
 
 export default function Game() {
   const gameRef = useRef(null);
+  const [finalScore, setFinalScore] = useState(0);
+  const [leaderboard, setLeaderboard] = useState(() => getStoredLeaderboard());
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [username, setUsername] = useState("");
+  const [scoreSubmitted, setScoreSubmitted] = useState(false);
 
   useEffect(() => {
 
@@ -226,23 +256,29 @@ export default function Game() {
         }
       });
 
-      // // SCORE TEXT
-      // scoreText = this.add.text(30, 30, "Score: 0", {
-      //   fontSize: "32px",
-      //   color: "#000",
-      // });
+      // SCORE TEXT
+      scoreText = this.add.text(30, 30, "Score: 0", {
+        fontFamily: "Arial, sans-serif",
+        fontSize: isMobile ? "20px" : "32px",
+        color: "#000",
+      });
+      scoreText.setDepth(10);
 
-      // // AUTO SCORE
-      // const scoreEvent = this.time.addEvent({
-      //   delay: 100,
-      //   loop: true,
-      //   callback: () => {
-      //     if (!gameEnded) {
-      //       score += 1;
-      //       scoreText.setText("Score: " + score);
-      //     }
-      //   },
-      // });
+      const updateScoreText = () => {
+        scoreText.setText("Score: " + score);
+      };
+
+      // AUTO SCORE
+      this.time.addEvent({
+        delay: 100,
+        loop: true,
+        callback: () => {
+          if (!gameEnded) {
+            score += 1;
+            updateScoreText();
+          }
+        },
+      });
 
       //COLLECT TRACKER
       const iconY = isMobile ? 100 : 90;
@@ -324,9 +360,8 @@ export default function Game() {
 
         treatsCollected++;
 
-        // score += 100;
-
-        // scoreText.setText("Score: " + score);
+        score += 100;
+        updateScoreText();
 
         // SPAWN RINGS AFTER 3 TREATS
         if (treatsCollected === 3) {
@@ -369,8 +404,8 @@ export default function Game() {
       function collectRing(player, ring) {
         ring.destroy();
         ringsCollected++;
-        // score += 100;
-        // scoreText.setText("Score: " + score);
+        score += 100;
+        updateScoreText();
 
         updateHUD();
 
@@ -421,13 +456,20 @@ export default function Game() {
       );
 
       function hitObstacle(player, obstacle) {
-        obstacle.destroy();
+        if (obstacle.getData("hit")) return;
+
+        obstacle.setData("hit", true);
+        obstacle.setTint(0xff8888);
+        obstacle.body.checkCollision.none = true;
+
+        this.time.delayedCall(600, () => {
+          obstacle.destroy();
+        });
 
         if (endSequenceStarted || endSequenceReady) return;
 
-        // score -= 50;
-
-        // scoreText.setText("Score: " + score);
+        score = Math.max(0, score - 50);
+        updateScoreText();
 
         player.setVelocityX(0);
       }
@@ -524,10 +566,13 @@ export default function Game() {
           if (player.x >= rightEdge) {
             gameEnded = true;
             console.log("🎮 Game Ended!", {
+              score,
               treatsCollected,
               ringsCollected,
               timestamp: new Date().toISOString(),
             });
+            setFinalScore(score);
+            setShowLeaderboard(true);
             player.setVelocityX(0);
             player.anims.stop();
             player.setTexture("final_fate");
@@ -554,9 +599,115 @@ export default function Game() {
 
   }, []);
 
+  const handleLeaderboardSubmit = (event) => {
+    event.preventDefault();
+    const nextLeaderboard = saveLeaderboardEntry(username, finalScore);
+    setLeaderboard(nextLeaderboard);
+    setScoreSubmitted(true);
+  };
+
   return (
     <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
       <div ref={gameRef} />
+
+      {showLeaderboard && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 20,
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: window.innerWidth < 768 ? "center" : "flex-start",
+            padding: window.innerWidth < 768 ? "96px 24px 16px" : "120px 0 20px 56px",
+            pointerEvents: "none",
+          }}
+        >
+          <div
+            style={{
+              width: window.innerWidth < 768 ? "min(360px, 100%)" : 360,
+              color: "#1f1f1f",
+              fontFamily: "Arial, sans-serif",
+              pointerEvents: "auto",
+              textAlign: window.innerWidth < 768 ? "center" : "left",
+            }}
+          >
+            <h2 style={{ margin: "0 0 8px", fontSize: 28 }}>Leaderboard</h2>
+            {!scoreSubmitted ? (
+              <form onSubmit={handleLeaderboardSubmit}>
+                <label
+                  htmlFor="leaderboard-name"
+                  style={{
+                    display: "block",
+                    marginBottom: 8,
+                    fontSize: 14,
+                    fontWeight: 700,
+                  }}
+                >
+                  Username
+                </label>
+                <div style={{ display: "flex", gap: 10 }}>
+                  <input
+                    id="leaderboard-name"
+                    value={username}
+                    onChange={(event) => setUsername(event.target.value)}
+                    maxLength={18}
+                    autoFocus
+                    style={{
+                      flex: 1,
+                      minWidth: 0,
+                      border: "2px solid #1f1f1f",
+                      borderRadius: 6,
+                      padding: "10px 12px",
+                      fontSize: 16,
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    style={{
+                      border: "2px solid #1f1f1f",
+                      borderRadius: 6,
+                      background: "#f9cf5f",
+                      padding: "10px 14px",
+                      fontSize: 16,
+                      fontWeight: 700,
+                      cursor: "pointer",
+                    }}
+                  >
+                    Add
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <p style={{ margin: "0 0 12px", fontWeight: 700 }}>
+                Score added.
+              </p>
+            )}
+
+            <ol
+              style={{
+                margin: "20px 0 0",
+                paddingLeft: window.innerWidth < 768 ? 0 : 24,
+                listStylePosition: window.innerWidth < 768 ? "inside" : "outside",
+              }}
+            >
+              {leaderboard.length === 0 ? (
+                <li style={{ padding: "6px 0" }}>No scores yet</li>
+              ) : (
+                leaderboard.slice(0, 5).map((entry, index) => (
+                  <li
+                    key={`${entry.name}-${entry.score}-${entry.date}-${index}`}
+                    style={{ padding: "6px 0", fontSize: 16 }}
+                  >
+                    <span>{entry.name}</span>
+                    <p1 style={{ float: "right" }}>{entry.score}</p1>
+                  </li>
+                ))
+              )}
+            </ol>
+          </div>
+        </div>
+      )}
 
       <img
         src="/rsvp_button.PNG"
