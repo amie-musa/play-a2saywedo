@@ -94,6 +94,43 @@ export default function Game() {
 
     const game = new Phaser.Game(config);
 
+    let winMessageText;
+
+    function showWinMessage(scene) {
+      if (winMessageText) return;
+
+      let redirectCountdown = 8;
+      const messageX = isMobile ? window.innerWidth / 2 : window.innerWidth - 430;
+      const messageY = isMobile ? window.innerHeight / 2 - 20 : window.innerHeight / 2 - 110;
+
+      const updateWinMessage = () => {
+        winMessageText.setText(
+          `You win! The rings made it safely.\n\nRedirecting in ${redirectCountdown}...`
+        );
+      };
+
+      winMessageText = scene.add.text(messageX, messageY, "", {
+        fontFamily: "Arial, sans-serif",
+        fontSize: isMobile ? "14px" : "18px",
+        color: "#000",
+        align: isMobile ? "center" : "left",
+        lineSpacing: 6,
+        wordWrap: { width: isMobile ? 280 : 360 },
+      });
+      winMessageText.setOrigin(isMobile ? 0.5 : 0, 0);
+      winMessageText.setDepth(10);
+      updateWinMessage();
+
+      scene.time.addEvent({
+        delay: 1000,
+        repeat: 7,
+        callback: () => {
+          redirectCountdown -= 1;
+          updateWinMessage();
+        },
+      });
+    }
+
     function preload() {
 
       // TEMP PLACEHOLDER ASSETS
@@ -247,25 +284,19 @@ export default function Game() {
         if (!endSequenceStarted && !gameEnded) {
           endSequenceReady = true;
           ringsCollected = maxRings;
-          this.add.text(
-            isMobile ? window.innerWidth / 2 : window.innerWidth / 2 - 350,
-            isMobile ? window.innerHeight / 2 - 25 : window.innerHeight / 2 - 10,
-            "The rings made it safely 💍",
-            { fontSize: isMobile ? "10px" : "36px", color: "#000" }
-          );
         }
       });
 
       // SCORE TEXT
       scoreText = this.add.text(30, 30, "Score: 0", {
         fontFamily: "Arial, sans-serif",
-        fontSize: isMobile ? "20px" : "32px",
+        fontSize: isMobile ? "16px" : "28px",
         color: "#000",
       });
       scoreText.setDepth(10);
 
       const updateScoreText = () => {
-        scoreText.setText("Score: " + score);
+        scoreText.setText("score: " + score);
       };
 
       // AUTO SCORE
@@ -410,12 +441,6 @@ export default function Game() {
         updateHUD();
 
         if (ringsCollected === maxRings) {
-          this.add.text(
-            isMobile ? window.innerWidth/ 2 : window.innerWidth / 2 - 300,
-            isMobile ? window.innerHeight / 2 - 25 : window.innerHeight / 2 - 25,
-            "The rings made it safely 💍",
-            { fontSize: isMobile ? "10px" : "36px", color: "#000" }
-          );
           endSequenceReady = true;
         }
       }
@@ -571,12 +596,13 @@ export default function Game() {
               ringsCollected,
               timestamp: new Date().toISOString(),
             });
-            setFinalScore(score);
-            setShowLeaderboard(true);
             player.setVelocityX(0);
             player.anims.stop();
             player.setTexture("final_fate");
             player.body.setAllowGravity(false);
+            showWinMessage(this);
+            setFinalScore(score);
+            setShowLeaderboard(true);
           }
         }
 
@@ -618,8 +644,8 @@ export default function Game() {
             zIndex: 20,
             display: "flex",
             alignItems: "flex-start",
-            justifyContent: window.innerWidth < 768 ? "center" : "flex-start",
-            padding: window.innerWidth < 768 ? "128px 24px 16px" : "120px 0 20px 56px",
+            justifyContent: "flex-start",
+            padding: window.innerWidth < 768 ? "128px 16px 16px 28px" : "150px 0 20px 56px",
             pointerEvents: "none",
           }}
         >
@@ -629,7 +655,7 @@ export default function Game() {
               color: "#1f1f1f",
               fontFamily: "Arial, sans-serif",
               pointerEvents: "auto",
-              textAlign: window.innerWidth < 768 ? "center" : "left",
+              textAlign: "left",
             }}
           >
             {!scoreSubmitted ? (
@@ -688,8 +714,8 @@ export default function Game() {
             <ol
               style={{
                 margin: "8px 0 0",
-                paddingLeft: window.innerWidth < 768 ? 0 : 24,
-                listStylePosition: window.innerWidth < 768 ? "inside" : "outside",
+                paddingLeft: 0,
+                listStyle: "none",
               }}
             >
               {leaderboard.length === 0 ? (
@@ -701,7 +727,7 @@ export default function Game() {
                     style={{ padding: "6px 0", fontSize: 16 }}
                   >
                     <span>{entry.name}</span>
-                    <p1 style={{ float: "right" }}>{entry.score}</p1>
+                    <strong style={{ float: "right" }}>{entry.score}</strong>
                   </li>
                 ))
               )}
