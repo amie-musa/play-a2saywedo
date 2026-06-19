@@ -44,6 +44,8 @@ export default function Game() {
 
     let score = 0;
     let scoreText;
+    let treats;
+    let rings;
 
     // HUD ICONS
     const treatIcons = [];
@@ -93,6 +95,28 @@ export default function Game() {
     };
 
     const game = new Phaser.Game(config);
+
+    function updateScoreText() {
+      if (scoreText) {
+        scoreText.setText("score: " + score);
+      }
+    }
+
+    function deductMissedCollectibles(group) {
+      if (!group) return;
+
+      group.getChildren().forEach((collectible) => {
+        if (!collectible || !collectible.active) return;
+
+        const collectibleWidth = collectible.displayWidth || collectible.width || 0;
+
+        if (collectible.x < -collectibleWidth) {
+          collectible.destroy();
+          score = Math.max(0, score - 25);
+          updateScoreText();
+        }
+      });
+    }
 
     let winMessageText;
 
@@ -295,10 +319,6 @@ export default function Game() {
       });
       scoreText.setDepth(10);
 
-      const updateScoreText = () => {
-        scoreText.setText("score: " + score);
-      };
-
       // AUTO SCORE
       this.time.addEvent({
         delay: 100,
@@ -344,8 +364,8 @@ export default function Game() {
       };
 
       // TREATS GROUP
-      const treats = this.physics.add.group({ allowGravity: false });
-      const rings = this.physics.add.group({ allowGravity: false });
+      treats = this.physics.add.group({ allowGravity: false });
+      rings = this.physics.add.group({ allowGravity: false });
 
       let treatSpawnEvent;
       let ringSpawnEvent;
@@ -571,6 +591,11 @@ export default function Game() {
         if (!endSequenceStarted) {
           clouds.tilePositionX += gameSpeed * 0.008;
           grass.tilePositionX += gameSpeed * 0.064;
+        }
+
+        if (!gameEnded) {
+          deductMissedCollectibles(treats);
+          deductMissedCollectibles(rings);
         }
 
         if (!endSequenceStarted && !gameEnded) {
