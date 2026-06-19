@@ -129,7 +129,7 @@ export default function Game() {
 
       const updateWinMessage = () => {
         winMessageText.setText(
-          `You win! The rings made it safely 💍.\n\nRedirecting in ${redirectCountdown}...`
+          `You win! The rings made it safely 💍.\nRedirecting in ${redirectCountdown}...`
         );
       };
 
@@ -684,7 +684,7 @@ export default function Game() {
             }}
           >
             {!scoreSubmitted ? (
-              <form onSubmit={handleLeaderboardSubmit}>
+              <form onSubmit={handleLeaderboardSubmit} style={{ marginTop: 10 }}>
                 <div style={{ display: "flex", gap: 10 }}>
                   <label
                     htmlFor="leaderboard-name"
