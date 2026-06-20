@@ -232,9 +232,10 @@ export default function Game({ onEnd }) {
     clouds.setOrigin(0, 0);
     clouds.setDepth(-1);
     const cloudTexture = this.textures.get("clouds").getSourceImage();
-    const cloudScale = isMobile
-      ? Math.max(window.innerHeight / cloudTexture.height, 0.45)
-      : 0.6;
+    const cloudScale = Math.max(
+      window.innerHeight / cloudTexture.height,
+      isMobile ? 0.45 : 0.6
+    );
     clouds.setTileScale(cloudScale);
 
     // VISUAL GRASS
@@ -615,7 +616,7 @@ export default function Game({ onEnd }) {
             player.body.setAllowGravity(false);
           }
 
-          const rightEdge = isMobile ? window.innerWidth * 0.12 : window.innerWidth * 0.54;
+          const rightEdge = isMobile ? window.innerWidth * 0.12 : window.innerWidth * 0.55;
           if (player.x >= rightEdge) {
             gameEnded = true;
             console.log("🎮 Game Ended!", {
