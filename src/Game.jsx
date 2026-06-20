@@ -554,7 +554,7 @@ export default function Game({ onEnd }) {
 
         // Create milo.png - fade in at fixed position
         const miloImage = this.physics.add.sprite(
-          isMobile ? window.innerWidth * .80 : window.innerWidth * .87,
+          isMobile ? window.innerWidth * .80 : window.innerWidth * .95,
           isMobile ? groundY - 60: groundY - 90,
           "milo"
         );
