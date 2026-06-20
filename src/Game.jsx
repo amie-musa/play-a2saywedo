@@ -708,12 +708,13 @@ export default function Game() {
                     maxLength={18}
                     autoFocus
                     style={{
-                      flex: 1,
+                      width: window.innerWidth < 768 ? 70 : 100,
                       minWidth: 0,
                       border: "2px solid #1f1f1f",
                       borderRadius: 6,
-                      padding: "10px 12px",
+                      padding: "4px 10px",
                       fontSize: 16,
+                      lineHeight: 1.1,
                     }}
                   />
                   <button
