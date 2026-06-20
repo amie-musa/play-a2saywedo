@@ -26,7 +26,7 @@ export default function EndPage() {
       boxSizing: "border-box",
       background: "#F4EFEA",
       display: "flex",
-      alignItems: isMobile ? "center" : "flex-start",
+      alignItems: "center",
       justifyContent: "center",
       overflowX: "hidden",
       padding: isMobile ? "32px 18px" : "clamp(10px, 2vh, 20px) 20px",
