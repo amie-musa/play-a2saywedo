@@ -10,7 +10,7 @@ import rsvpButton from "./assets/rsvp_button.PNG";
 import playButton from "./assets/play_button.PNG";
 
 export default function App() {
-  if (window.location.pathname === "/end") {
+  if (window.location.hash === "#end") {
     return <EndPage />;
   }
 
