@@ -151,6 +151,9 @@ export default function Game() {
         callback: () => {
           redirectCountdown -= 1;
           updateWinMessage();
+          if (redirectCountdown <= 0) {
+            window.location.href = "/end";
+          }
         },
       });
     }

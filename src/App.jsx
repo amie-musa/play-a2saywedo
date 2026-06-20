@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Game from "./Game";
+import EndPage from "./EndPage";
 
 import title from "./assets/title.PNG";
 import heart from "./assets/heart.gif";
@@ -9,6 +10,10 @@ import rsvpButton from "./assets/rsvp_button.PNG";
 import playButton from "./assets/play_button.PNG";
 
 export default function App() {
+  if (window.location.pathname === "/end") {
+    return <EndPage />;
+  }
+
   const handleRSVP = () => {
     window.location.href = "https://a2saywedo.com";
   };
