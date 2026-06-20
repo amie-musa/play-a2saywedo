@@ -719,16 +719,22 @@ export default function Game() {
                   <button
                     type="submit"
                     style={{
-                      border: "2px solid #1f1f1f",
-                      borderRadius: 6,
-                      background: "#f9cf5f",
-                      padding: "10px 14px",
-                      fontSize: 16,
-                      fontWeight: 700,
+                      border: 0,
+                      background: "transparent",
+                      padding: 0,
                       cursor: "pointer",
+                      flexShrink: 0,
                     }}
+                    aria-label="Add score"
                   >
-                    Add
+                    <img
+                      src="/add.png"
+                      alt=""
+                      style={{
+                        display: "block",
+                        width: window.innerWidth < 768 ? 54 : 64,
+                      }}
+                    />
                   </button>
                 </div>
               </form>
