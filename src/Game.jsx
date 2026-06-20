@@ -41,6 +41,7 @@ export default function Game({ onEnd }) {
     let clouds;
     let cursors;
     let jumpPressed = false;
+    let endPlayerTargetX;
 
     let score = 0;
     let scoreText;
@@ -62,6 +63,7 @@ export default function Game({ onEnd }) {
 
     let gameSpeed = 250;
     const isMobile = window.innerWidth < 768;
+    const gravityY = 800;
 
     const config = {
       type: Phaser.AUTO,
@@ -76,7 +78,7 @@ export default function Game({ onEnd }) {
       physics: {
         default: "arcade",
         arcade: {
-          gravity: { y: 800 },
+          gravity: { y: gravityY },
           debug: false,
         },
       },
@@ -116,6 +118,13 @@ export default function Game({ onEnd }) {
           updateScoreText();
         }
       });
+    }
+
+    function getJumpVelocity() {
+      const targetY = window.innerHeight * 0.02 + player.displayHeight / 2;
+      const jumpHeight = Math.max(player.y - targetY, 0);
+
+      return -Math.sqrt(2 * gravityY * jumpHeight);
     }
 
     let winMessageText;
@@ -563,6 +572,42 @@ export default function Game({ onEnd }) {
         miloImage.setAlpha(0);
         miloImage.body.allowGravity = false;
 
+        const fateToUsGap = 0.5;
+        let usToMiloGap = 0.5 - miloImage.displayWidth * (isMobile ? 0.22 : 0.18);
+        const padding = isMobile ? 7 : 12;
+        const availableWidth = window.innerWidth - padding * 2;
+        const finalFateTexture = this.textures.get("final_fate").getSourceImage();
+        const finalFateWidth = finalFateTexture.width * player.scaleX;
+
+        let totalWidth = finalFateWidth + usImage.displayWidth + miloImage.displayWidth + fateToUsGap + usToMiloGap;
+
+        if (totalWidth > availableWidth) {
+          const fitScale = availableWidth / totalWidth;
+          player.setScale(player.scaleX * fitScale);
+          usImage.setScale(usImage.scaleX * fitScale);
+          miloImage.setScale(miloImage.scaleX * fitScale);
+          player.body.setSize(
+            player.width * 0.5,
+            player.height * 0.6
+          );
+          usToMiloGap = 0.5 - miloImage.displayWidth * (isMobile ? 0.22 : 0.18);
+          totalWidth = finalFateWidth * fitScale + usImage.displayWidth + miloImage.displayWidth + fateToUsGap + usToMiloGap;
+        }
+
+        const groupCenterX = isMobile
+          ? window.innerWidth / 2
+          : window.innerWidth * 0.7;
+        const startX = Phaser.Math.Clamp(
+          groupCenterX - totalWidth / 2,
+          padding,
+          window.innerWidth - padding - totalWidth
+        );
+
+        const finalDisplayWidth = finalFateTexture.width * player.scaleX;
+        endPlayerTargetX = startX + finalDisplayWidth / 2;
+        usImage.x = endPlayerTargetX + finalDisplayWidth / 2 + fateToUsGap + usImage.displayWidth / 2;
+        miloImage.x = usImage.x + usImage.displayWidth / 2 + usToMiloGap + miloImage.displayWidth / 2;
+
         // Fade in both images
         this.tweens.add({
           targets: [usImage, miloImage],
@@ -616,7 +661,7 @@ export default function Game({ onEnd }) {
             player.body.setAllowGravity(false);
           }
 
-          const rightEdge = isMobile ? window.innerWidth * 0.12 : window.innerWidth * 0.55;
+          const rightEdge = endPlayerTargetX ?? (isMobile ? window.innerWidth * 0.12 : window.innerWidth * 0.55);
           if (player.x >= rightEdge) {
             gameEnded = true;
             console.log("🎮 Game Ended!", {
@@ -642,7 +687,7 @@ export default function Game({ onEnd }) {
         jumpPressed) &&
       player.body.blocked.down
     ) {
-        player.setVelocityY(-800);
+        player.setVelocityY(getJumpVelocity());
 
         jumpPressed = false;
       }
