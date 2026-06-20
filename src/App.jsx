@@ -10,22 +10,22 @@ import rsvpButton from "./assets/rsvp_button.PNG";
 import playButton from "./assets/play_button.PNG";
 
 export default function App() {
-  if (window.location.hash === "#end") {
-    return <EndPage />;
-  }
-
   const handleRSVP = () => {
     window.location.href = "https://a2saywedo.com";
   };
 
-  const [started, setStarted] = useState(false);
+  const [screen, setScreen] = useState("home");
 
   const handlePlay = () => {
-    setStarted(true);
+    setScreen("game");
   };
 
-  if (started) {
-    return <Game />;
+  if (screen === "end") {
+    return <EndPage />;
+  }
+
+  if (screen === "game") {
+    return <Game onEnd={() => setScreen("end")} />;
   }
 
   const styles = {
