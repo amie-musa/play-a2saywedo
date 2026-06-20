@@ -26,7 +26,7 @@ function saveLeaderboardEntry(name, score) {
   return leaderboard;
 }
 
-export default function Game() {
+export default function Game({ onEnd }) {
   const gameRef = useRef(null);
   const [finalScore, setFinalScore] = useState(0);
   const [leaderboard, setLeaderboard] = useState(() => getStoredLeaderboard());
@@ -152,7 +152,7 @@ export default function Game() {
           redirectCountdown -= 1;
           updateWinMessage();
           if (redirectCountdown <= 0) {
-            window.location.href = "/#end";
+            onEnd();
           }
         },
       });
