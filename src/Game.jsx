@@ -554,7 +554,7 @@ export default function Game({ onEnd }) {
 
         // Create milo.png - fade in at fixed position
         const miloImage = this.physics.add.sprite(
-          isMobile ? window.innerWidth * .80 : window.innerWidth * .95,
+          isMobile ? window.innerWidth * .80 : window.innerWidth * .82,
           isMobile ? groundY - 60: groundY - 90,
           "milo"
         );
@@ -615,7 +615,7 @@ export default function Game({ onEnd }) {
             player.body.setAllowGravity(false);
           }
 
-          const rightEdge = isMobile ? window.innerWidth * 0.12 : window.innerWidth * 0.52;
+          const rightEdge = isMobile ? window.innerWidth * 0.12 : window.innerWidth * 0.54;
           if (player.x >= rightEdge) {
             gameEnded = true;
             console.log("🎮 Game Ended!", {
