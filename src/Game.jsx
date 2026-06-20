@@ -152,7 +152,7 @@ export default function Game() {
           redirectCountdown -= 1;
           updateWinMessage();
           if (redirectCountdown <= 0) {
-            window.location.href = "/end";
+            window.location.href = "/#end";
           }
         },
       });
