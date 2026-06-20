@@ -123,7 +123,7 @@ export default function Game({ onEnd }) {
     function showWinMessage(scene) {
       if (winMessageText) return;
 
-      let redirectCountdown = 8;
+      let redirectCountdown = 6;
       const messageX = isMobile ? window.innerWidth / 2 : window.innerWidth - 430;
       const messageY = isMobile ? window.innerHeight * 0.55 : window.innerHeight / 2 - 110;
 

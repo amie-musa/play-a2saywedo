@@ -1,4 +1,20 @@
+import { useEffect, useState } from "react";
+
 export default function EndPage() {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+
+  useEffect(() => {
+    const updateLayout = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", updateLayout);
+
+    return () => {
+      window.removeEventListener("resize", updateLayout);
+    };
+  }, []);
+
   const goToWeddingSite = () => {
     window.location.href = "https://a2saywedo.com/";
   };
@@ -10,35 +26,42 @@ export default function EndPage() {
       boxSizing: "border-box",
       background: "#F4EFEA",
       display: "flex",
+      alignItems: isMobile ? "center" : "flex-start",
       justifyContent: "center",
       overflowX: "hidden",
-      padding: "clamp(8px, 5vh, 64px) 20px 32px",
+      padding: isMobile ? "32px 18px" : "clamp(10px, 2vh, 20px) 20px",
     },
     content: {
-      width: "min(100%, 1000px)",
+      width: isMobile ? "min(100%, 420px)" : "min(100%, 860px)",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
     },
     invitation: {
-      width: "min(92vw, 860px)",
+      width: isMobile ? "min(92vw, 380px)" : "min(66vw, 690px)",
+      maxHeight: isMobile ? "none" : "22vh",
+      objectFit: "contain",
       display: "block",
     },
     button: {
-      marginTop: "clamp(6px, 3vh, 36px)",
+      marginTop: isMobile ? 18 : "clamp(8px, 2vh, 18px)",
       padding: 0,
       border: 0,
       background: "transparent",
       cursor: "pointer",
     },
     weddingSite: {
-      width: "min(82vw, 760px)",
+      width: isMobile ? "min(84vw, 350px)" : "min(56vw, 610px)",
+      maxHeight: isMobile ? "none" : "12vh",
+      objectFit: "contain",
       display: "block",
     },
     endCredit: {
-      width: "min(88vw, 760px)",
+      width: isMobile ? "min(88vw, 380px)" : "min(58vw, 620px)",
+      maxHeight: isMobile ? "none" : "58vh",
+      objectFit: "contain",
       display: "block",
-      marginTop: "clamp(8px, 4vh, 44px)",
+      marginTop: isMobile ? 22 : "clamp(8px, 2vh, 18px)",
     },
   };
 
