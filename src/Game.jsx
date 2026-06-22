@@ -1,38 +1,57 @@
 import { useEffect, useRef, useState } from "react";
 import Phaser from "phaser";
 
-const leaderboardKey = "a2saywedo-leaderboard";
+async function parseLeaderboardResponse(response, fallbackMessage) {
+  const text = await response.text();
+  let data = {};
 
-function getStoredLeaderboard() {
   try {
-    return JSON.parse(localStorage.getItem(leaderboardKey)) || [];
+    data = text ? JSON.parse(text) : {};
   } catch {
-    return [];
+    throw new Error(
+      "Leaderboard API did not return JSON. If this is local, run the app with Vercel dev instead of Vite dev."
+    );
   }
+
+  if (!response.ok) {
+    throw new Error(data.error || fallbackMessage);
+  }
+
+  return data.leaderboard || [];
 }
 
-function saveLeaderboardEntry(name, score) {
-  const entry = {
-    name: name.trim() || "Player",
-    score,
-    date: new Date().toISOString(),
-  };
+async function fetchLeaderboard() {
+  const response = await fetch("/api/leaderboard");
+  return parseLeaderboardResponse(response, "Could not load leaderboard.");
+}
 
-  const leaderboard = [...getStoredLeaderboard(), entry]
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 5);
+async function saveLeaderboardEntry(name, score) {
+  const response = await fetch("/api/leaderboard", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ name, score }),
+  });
 
-  localStorage.setItem(leaderboardKey, JSON.stringify(leaderboard));
-  return leaderboard;
+  return parseLeaderboardResponse(response, "Could not save score.");
 }
 
 export default function Game({ onEnd }) {
   const gameRef = useRef(null);
+  const onEndRef = useRef(onEnd);
   const [finalScore, setFinalScore] = useState(0);
-  const [leaderboard, setLeaderboard] = useState(() => getStoredLeaderboard());
+  const [leaderboard, setLeaderboard] = useState([]);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [username, setUsername] = useState("");
   const [scoreSubmitted, setScoreSubmitted] = useState(false);
+  const [leaderboardError, setLeaderboardError] = useState("");
+  const [leaderboardLoading, setLeaderboardLoading] = useState(false);
+  const [leaderboardSubmitting, setLeaderboardSubmitting] = useState(false);
+
+  useEffect(() => {
+    onEndRef.current = onEnd;
+  }, [onEnd]);
 
   useEffect(() => {
 
@@ -161,7 +180,7 @@ export default function Game({ onEnd }) {
           redirectCountdown -= 1;
           updateWinMessage();
           if (redirectCountdown <= 0) {
-            onEnd();
+            onEndRef.current();
           }
         },
       });
@@ -699,11 +718,52 @@ export default function Game({ onEnd }) {
 
   }, []);
 
-  const handleLeaderboardSubmit = (event) => {
+  useEffect(() => {
+    if (!showLeaderboard) return;
+
+    let cancelled = false;
+
+    async function loadLeaderboard() {
+      setLeaderboardLoading(true);
+      setLeaderboardError("");
+
+      try {
+        const nextLeaderboard = await fetchLeaderboard();
+        if (!cancelled) {
+          setLeaderboard(nextLeaderboard);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setLeaderboardError(error.message);
+        }
+      } finally {
+        if (!cancelled) {
+          setLeaderboardLoading(false);
+        }
+      }
+    }
+
+    loadLeaderboard();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [showLeaderboard]);
+
+  const handleLeaderboardSubmit = async (event) => {
     event.preventDefault();
-    const nextLeaderboard = saveLeaderboardEntry(username, finalScore);
-    setLeaderboard(nextLeaderboard);
-    setScoreSubmitted(true);
+    setLeaderboardSubmitting(true);
+    setLeaderboardError("");
+
+    try {
+      const nextLeaderboard = await saveLeaderboardEntry(username, finalScore);
+      setLeaderboard(nextLeaderboard);
+      setScoreSubmitted(true);
+    } catch (error) {
+      setLeaderboardError(error.message);
+    } finally {
+      setLeaderboardSubmitting(false);
+    }
   };
 
   return (
@@ -765,12 +825,14 @@ export default function Game({ onEnd }) {
                   />
                   <button
                     type="submit"
+                    disabled={leaderboardSubmitting}
                     style={{
                       border: 0,
                       background: "transparent",
                       padding: 0,
-                      cursor: "pointer",
+                      cursor: leaderboardSubmitting ? "default" : "pointer",
                       flexShrink: 0,
+                      opacity: leaderboardSubmitting ? 0.5 : 1,
                     }}
                     aria-label="Add score"
                   >
@@ -791,6 +853,12 @@ export default function Game({ onEnd }) {
               </p>
             )}
 
+            {leaderboardError && (
+              <p style={{ margin: "12px 0 0", fontSize: 14, color: "#9b1c1c" }}>
+                {leaderboardError}
+              </p>
+            )}
+
             <h3 style={{ margin: "20px 0 0", fontSize: 28 }}>leaderboard</h3>
             <ol
               style={{
@@ -799,7 +867,9 @@ export default function Game({ onEnd }) {
                 listStyle: "none",
               }}
             >
-              {leaderboard.length === 0 ? (
+              {leaderboardLoading ? (
+                <li style={{ padding: "6px 0" }}>loading scores...</li>
+              ) : leaderboard.length === 0 ? (
                 <li style={{ padding: "6px 0" }}>no scores yet</li>
               ) : (
                 leaderboard.slice(0, 5).map((entry, index) => (

@@ -5,7 +5,6 @@ import EndPage from "./EndPage";
 import title from "./assets/title.PNG";
 import heart from "./assets/heart.gif";
 import instructions from "./assets/instructions.PNG";
-import skipText from "./assets/skip.PNG";
 import rsvpButton from "./assets/rsvp_button.PNG";
 import playButton from "./assets/play_button.PNG";
 
