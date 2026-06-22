@@ -3,7 +3,7 @@ import Phaser from "phaser";
 
 async function parseLeaderboardResponse(response, fallbackMessage) {
   const text = await response.text();
-  let data = {};
+  let data;
 
   try {
     data = text ? JSON.parse(text) : {};
@@ -40,6 +40,7 @@ async function saveLeaderboardEntry(name, score) {
 export default function Game({ onEnd }) {
   const gameRef = useRef(null);
   const onEndRef = useRef(onEnd);
+  const isEnteringNameRef = useRef(false);
   const [finalScore, setFinalScore] = useState(0);
   const [leaderboard, setLeaderboard] = useState([]);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
@@ -173,13 +174,16 @@ export default function Game({ onEnd }) {
       winMessageText.setDepth(10);
       updateWinMessage();
 
-      scene.time.addEvent({
+      const redirectTimer = scene.time.addEvent({
         delay: 1000,
-        repeat: 7,
+        loop: true,
         callback: () => {
+          if (isEnteringNameRef.current) return;
+
           redirectCountdown -= 1;
           updateWinMessage();
           if (redirectCountdown <= 0) {
+            redirectTimer.remove(false);
             onEndRef.current();
           }
         },
@@ -752,6 +756,7 @@ export default function Game({ onEnd }) {
 
   const handleLeaderboardSubmit = async (event) => {
     event.preventDefault();
+    isEnteringNameRef.current = false;
     setLeaderboardSubmitting(true);
     setLeaderboardError("");
 
@@ -811,6 +816,12 @@ export default function Game({ onEnd }) {
                     id="leaderboard-name"
                     value={username}
                     onChange={(event) => setUsername(event.target.value)}
+                    onFocus={() => {
+                      isEnteringNameRef.current = true;
+                    }}
+                    onBlur={() => {
+                      isEnteringNameRef.current = false;
+                    }}
                     maxLength={18}
                     autoFocus
                     style={{
