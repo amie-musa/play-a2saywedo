@@ -815,8 +815,14 @@ export default function Game({ onEnd }) {
                   <input
                     id="leaderboard-name"
                     value={username}
-                    onChange={(event) => setUsername(event.target.value)}
-                    onFocus={() => {
+                    onChange={(event) => {
+                      isEnteringNameRef.current = true;
+                      setUsername(event.target.value);
+                    }}
+                    onPointerDown={() => {
+                      isEnteringNameRef.current = true;
+                    }}
+                    onKeyDown={() => {
                       isEnteringNameRef.current = true;
                     }}
                     onBlur={() => {
